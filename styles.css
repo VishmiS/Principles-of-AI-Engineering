@@ -1,0 +1,129 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e0f7f7; /* Very light turquoise background */
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Left Section Styling */
+.left-section {
+    width: 48%;
+    padding: 20px;
+    background-color: #e0f7f7; /* Very light turquoise for the form section */
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Right Section Styling */
+.right-section {
+    width: 48%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Elements */
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+/* Fixed Height for Textarea */
+textarea {
+    height: 200px;  /* Fixed height */
+    resize: none;   /* Disable resizing */
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #b2ebf2; /* Light turquoise background for the button */
+    color: black;             /* Text color black for contrast */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #80deea; /* Slightly darker turquoise when hovered */
+}
+
+/* Radio Button Group */
+.radio-group {
+    margin-top: 10px;
+}
+
+.radio-group label {
+    display: block;
+    margin: 5px 0;
+}
+
+#error-message {
+    display: none; /* Initially hidden */
+    color: red;    /* Red color for the error message */
+    margin-top: 10px;
+    font-size: 12px; /* Smaller font size for the error message */
+    font-family: Arial, sans-serif; /* Optional: Choose a font for better readability */
+    line-height: 1.5; /* Optional: Adjust line height for better readability */
+}
+
+/* Styling for confidence score */
+#confidence-score {
+    font-weight: bold;
+    color: #4CAF50; /* Green color for confidence score */
+}
+
+#confidence-warning {
+    margin-top: 10px;
+    color: orange;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#highlighted-text {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f4f4f4;
+}
+
+#highlighted-input span {
+    padding: 2px;
+    border-radius: 2px;
+    font-weight: normal
+}

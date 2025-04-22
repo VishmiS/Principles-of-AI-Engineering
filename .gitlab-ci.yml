@@ -1,0 +1,27 @@
+# Define pipeline stages
+stages:
+  - test  # The pipeline has one stage: "test"
+
+# Define the test job
+test:
+  stage: test
+  image: python:3.12.3  # Use the Python 3.12.3 Docker image
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install pytest pytest-cov  # Install testing libraries
+    - pip install -r requirements.txt  # Install project dependencies
+  script:
+    - pytest --cov=./ --cov-report=xml --cov-report=term-missing # Run tests and generate coverage report
+  artifacts:
+    paths:
+      - coverage.xml  # Save the coverage report
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml  # Use the coverage report for visibility in GitLab
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - random_forest_model.pkl
+      - .cache/pip/
+    policy: pull

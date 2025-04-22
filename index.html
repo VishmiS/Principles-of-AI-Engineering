@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Prediction</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Issue Prediction</h1>
+        <div class="content-wrapper">
+            <!-- Left Section: Form for Prediction -->
+            <div class="left-section">
+                <form id="prediction-form">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+
+                    <label for="body">Body:</label>
+                    <textarea id="body" name="body" required></textarea>
+
+                    <!-- Error Message -->
+                <div id="error-message"></div>
+
+                    <button type="button" id="predict-btn">Predict</button>
+                    <button type="button" id="reset-btn">Reset Form</button> <!-- New reset button -->
+                </form>
+            </div>
+
+            <!-- Right Section: Display Prediction and Correction -->
+            <div class="right-section">
+                <div id="prediction-result" style="display: none; font-size: 13px; color: black; font-weight: bold;">
+                    <h2>Prediction Results</h2>
+                    <p><strong>Predicted Label:</strong> <span id="predicted-label"></span></p>
+                    <p><strong>Prediction ID:</strong> <span id="prediction-id"></span></p>
+                    <p><strong>Confidence Score:</strong> <span id="confidence-score"></span></p>
+
+                    <!-- Confidence Warning -->
+                    <p id="confidence-warning" style="display: none; color: orange; font-weight: bold;"></p>
+
+                    <!-- Highlighted Input Section -->
+                    <div id="highlighted-text" style="display: none; margin-top: 20px;">
+                        <h3>Important features</h3>
+                        <p id="highlighted-input" style="white-space: pre-wrap;"></p>
+                    </div>
+
+                    <!-- Radio buttons for correction -->
+                    <div class="radio-group">
+                        <label><input type="radio" name="label" value="bug"> Bug</label>
+                        <label><input type="radio" name="label" value="enhancement"> Enhancement</label>
+                        <label><input type="radio" name="label" value="question"> Question</label>
+                    </div>
+
+                    <button type="button" id="submit-btn">Submit Correction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
