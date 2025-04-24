@@ -40,7 +40,6 @@ It incorporates data preprocessing, model training, REST API development with Fl
 ├── index.html                # Frontend UI  
 ├── app.js                    # JavaScript logic for the client UI  
 ├── styles.css                # Styling for the frontend  
-├── Exercise10.ipynb          # Jupyter notebook (data analysis & visualization)  
 ├── .coverage / coverage.xml  # Code coverage reports  
 ├── README.md                 # Project documentation
 
