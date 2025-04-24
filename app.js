@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("predict-btn").addEventListener("click", predictIssue);
     document.getElementById("submit-btn").addEventListener("click", submitCorrection);
     document.getElementById("reset-btn").addEventListener("click", resetForm); // Reset button event listener
+    // Hide lime explanation on load
+    document.getElementById('lime-explanation').style.display = 'none';
 });
 
 async function predictIssue() {
@@ -56,6 +58,11 @@ async function predictIssue() {
 
             // Highlight input text with important features
             highlightInputText(title, body, result.important_features);
+
+            // Render LIME explanation and make it visible
+            if (result.lime_explanation) {
+                renderLimeExplanation(result.lime_explanation);
+            }
 
             document.getElementById('prediction-result').style.display = 'block';
             document.getElementById('predict-btn').disabled = true; // Disable predict button after prediction
@@ -133,13 +140,74 @@ async function submitCorrection() {
 
 // Function to reset the form and prediction result section
 function resetForm() {
+    console.log("Reset function triggered");
     document.getElementById('prediction-form').reset(); // Reset form fields
     document.getElementById('prediction-result').style.display = 'none'; // Hide prediction result section
     document.getElementById('predict-btn').disabled = false; // Re-enable predict button
     document.getElementById('error-message').style.display = 'none'; // Hide confidence warning
     document.getElementById('confidence-warning').style.display = 'none'; // Hide confidence warning
     document.getElementById('important-features').innerHTML = ''; // Clear important features list
+    document.getElementById('lime-explanation').style.display = 'none';
+    document.getElementById('lime-table-body').innerHTML = '';
 // Reset the radio buttons
 const radioButtons = document.querySelectorAll('input[name="label"]');
 radioButtons.forEach(radio => radio.checked = false); // Uncheck all radio buttons
+}
+
+function renderLimeExplanation(explanation) {
+    const limeSection = document.getElementById('lime-explanation');
+    const outputDiv = document.getElementById('lime-table-body');
+    outputDiv.innerHTML = ''; // Clear old content
+
+    // Legend (better styled)
+    const legend = document.createElement('div');
+    legend.innerHTML = `
+        <div style="margin-bottom: 16px; font-size: 14px;">
+            <strong>Legend:</strong>
+            <span style="background-color: rgba(0, 128, 0, 0.2); color: black; padding: 4px 8px; margin-left: 12px; border-radius: 6px;">Supports Prediction</span>
+            <span style="background-color: rgba(255, 0, 0, 0.2); color: black; padding: 4px 8px; margin-left: 12px; border-radius: 6px;">Against Prediction</span>
+        </div>
+    `;
+    outputDiv.appendChild(legend);
+
+    // Line for each token
+    const explanationWrapper = document.createElement('div');
+    explanationWrapper.style.display = 'flex';
+    explanationWrapper.style.flexWrap = 'wrap';
+    explanationWrapper.style.gap = '12px';
+    explanationWrapper.style.alignItems = 'flex-end';
+
+    explanation.forEach(([word, weight]) => {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.minWidth = '50px';
+        wrapper.style.wordBreak = 'break-word';
+
+        const weightLabel = document.createElement('div');
+        weightLabel.textContent = weight.toFixed(4);
+        weightLabel.style.fontSize = '12px';
+        weightLabel.style.marginBottom = '4px';
+        weightLabel.style.color = weight >= 0 ? 'green' : 'red';
+
+        const wordBox = document.createElement('div');
+        wordBox.textContent = word;
+        wordBox.style.padding = '6px 10px';
+        wordBox.style.borderRadius = '8px';
+        wordBox.style.backgroundColor = weight >= 0
+            ? `rgba(0, 128, 0, ${Math.min(Math.abs(weight), 1)})`
+            : `rgba(255, 0, 0, ${Math.min(Math.abs(weight), 1)})`;
+        wordBox.style.color = '#000';
+        wordBox.style.fontWeight = 'bold';
+        wordBox.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+        wordBox.style.textAlign = 'center';
+
+        wrapper.appendChild(weightLabel);
+        wrapper.appendChild(wordBox);
+        explanationWrapper.appendChild(wrapper);
+    });
+
+    outputDiv.appendChild(explanationWrapper);
+    limeSection.style.display = 'block';
 }

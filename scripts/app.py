@@ -9,7 +9,8 @@ from langdetect import detect, DetectorFactory
 from prometheus_client import Counter, Gauge, Summary, generate_latest, REGISTRY
 from flask import Response
 import os
-
+from lime.lime_text import LimeTextExplainer
+import numpy as np
 
 app = Flask(__name__)
 CORS(app)
@@ -103,8 +104,18 @@ def predict_issue():
         conn.commit()
         conn.close()
 
+        # LIME Explanation
+        class_names = model.named_steps['classifier'].classes_.tolist()
+        explainer = LimeTextExplainer(class_names=class_names)
+        lime_exp = explainer.explain_instance(
+            preprocessed_text,
+            model.predict_proba,
+            num_features=10
+        )
+        lime_explanation = lime_exp.as_list()  # List of (word, weight) tuples
+
         # Return the prediction and issue ID
-        return jsonify({"id": issue_id, "predicted_label": predicted_label, "confidence": confidence, "important_features": important_features}), 200
+        return jsonify({"id": issue_id, "predicted_label": predicted_label, "confidence": confidence, "important_features": important_features, "lime_explanation": lime_explanation}), 200
 
     except Exception as e:
         print(f"Error: {e}")
@@ -215,6 +226,51 @@ def view_predictions():
 @app.route('/metrics', methods=['GET'])
 def metrics():
     return Response(generate_latest(REGISTRY), content_type='text/plain')
+
+
+@app.route('/api/explain', methods=['POST'])
+def explain_prediction():
+    try:
+        data = request.get_json()
+
+        title = data.get('title', '')
+        body = data.get('body', '')
+        full_text = str(title).strip() + ' ' + str(body).strip()
+
+        # Check language
+        language = detect(full_text)
+        if language != 'en':
+            return jsonify({
+                "error": "The input language is not English.",
+                "detected_language": language
+            }), 400
+
+        # Preprocess
+        preprocessed_tokens = preprocess_text(full_text)
+        preprocessed_text = ' '.join(preprocessed_tokens)
+
+        # LIME explainer for text
+        class_names = model.named_steps['classifier'].classes_.tolist()
+        explainer = LimeTextExplainer(class_names=class_names)
+
+        # Explain instance
+        explanation = explainer.explain_instance(
+            preprocessed_text,
+            model.predict_proba,
+            num_features=10
+        )
+
+        # Get explanation as list
+        explanation_data = explanation.as_list()
+
+        return jsonify({
+            "input_text": full_text,
+            "predicted_label": model.predict([preprocessed_text])[0],
+            "explanation": explanation_data  # List of tuples (word, weight)
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
